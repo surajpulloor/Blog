@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Delete Comment{% endblock title %}
+
+
+{% block body %}
+
+    <h1>Delete a Comment on: {{blog.title}}</h1>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{form}}
+        <input type="submit" value="Delete Comment" class="btn btn-primary">
+    </form>
+
+{% endblock body %}

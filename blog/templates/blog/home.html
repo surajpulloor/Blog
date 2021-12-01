@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title%} Home {% endblock %}
+
+{% block body %}
+    {% if users|length == 0 %}
+        <h1>There are no users in the system</h1>
+        <h4>Create some by <a href="{% url 'blog:signup' %}">Signing Up</a></h4>
+    {% else %}
+        <ul>
+            {% for user in users %}
+                <li><a href="{{user.id}}/blogs">{{ user.first_name}}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

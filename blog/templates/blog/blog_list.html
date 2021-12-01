@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title%} Blogs {% endblock %}
+
+{% block body %}
+    {% if blogs|length == 0 %}
+        <h1>There are no Blogs/Hidden in the system.</h1>
+        <h4>Create some by <a href="{% url 'blog:create_blog' %}">Clicking Here</a></h4>
+    {% else %}
+        <ul>
+            {% for blog in blogs %}
+                <li><a href="/home/{{blog.blogid}}">{{blog.title}}</a></li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

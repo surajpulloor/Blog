@@ -1,0 +1,84 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+
+{% if blog.isVisible%}
+    {{blog.title}}
+{% else %}
+    Protected
+{% endif %}
+
+{% endblock title %}
+
+{% block body %}
+
+    {% if blog.isVisible%}
+
+        <div class="blog-title-author">
+            <h1 class="blog-title">{{blog.title}}</h1>
+            <h6>By {{blog.user.first_name}}</h6>
+        </div>
+        
+        <div class="meta-data">
+            
+            <h6>Created On: {{blog.creation_timestamp}}</h6>
+            <h6>Modified On: {{blog.modified_timestamp}}</h6>
+            <h6>{{blog.numberOfViews}} Views</h6>
+            <h6>{{blog.noOfLikes}} Likes</h6>
+            <h6>{{blog.noOfDisLikes}} Dislikes</h6>
+        </div>
+
+        <p class="blog-body">{{blog.body}}</p>
+
+        <ul class="tags">
+            {% for tag in blog.tags.all %}
+                <li class="tag">{{tag}}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="like-dislike-controls">
+
+
+            <form action="{{blog.blogid}}/like?next=/home/{{blog.blogid}}" method="post" class="like-form">
+                {% csrf_token %}
+                {% if liked %}
+                    <input type="submit" value="Like" class="btn btn-primary">
+                {% else %}
+                    <input type="submit" value="Like" class="btn btn-outline-primary">
+                {% endif %}
+            </form>
+
+            <form action="{{blog.blogid}}/dislike?next=/home/{{blog.blogid}}" method="post" class="dislike-form">
+                {% csrf_token %}
+                {% if disLiked %}
+                    <input type="submit" value="Dislike" class="btn btn-primary">
+                {% else %}
+                    <input type="submit" value="Dislike" class="btn btn-outline-primary">
+                {% endif %}
+            </form>
+
+        </div>
+
+        
+
+        <div class="comments">
+
+            <h3 class="comment-header">Comments</h3>
+            <form action="{{blog.blogid}}/add/comment?next=/home/{{blog.blogid}}" method="post">
+                {% csrf_token %}
+                {% comment %} <input type="hidden" name="next" value="/home/{{blog.blogid}}"> {% endcomment %}
+                <input type="submit" value="Post Comment" class="btn btn-primary">
+            </form>
+
+            {% if comments|length != 0 %}
+                <div class="comment-section">
+                    {% include "blog/comments.html" %}
+                </div>
+            {% endif %}
+
+        </div>
+
+    {% else %}
+        <h1>Sorry, this blog is protected</h1>
+    {% endif %}
+{% endblock body %}

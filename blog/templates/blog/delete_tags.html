@@ -1,0 +1,19 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+
+    Delete Tag
+
+{% endblock title %}
+
+
+{% block body %}
+
+    <form action="/home/{{tag.tagid}}/delete/tag" method="post">
+        {% csrf_token %}
+        {{ form }}
+
+        <input type="submit" value="Delete Tag" class="btn btn-primary">
+    </form>
+
+{% endblock body %}

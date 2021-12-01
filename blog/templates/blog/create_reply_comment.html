@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Reply to a Comment{% endblock title %}
+
+
+{% block body %}
+
+    <h1>Reply to &quot;{{ comment.body }}&quot; by &quot;{{ comment.comment_user.first_name }}&quot; on: &quot;{{blog.title}}&quot;</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{form}}
+        <input type="submit" value="Reply" class="btn btn-primary">
+    </form>
+
+{% endblock body %}

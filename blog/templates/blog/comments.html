@@ -1,0 +1,162 @@
+{% for comment in comments %}
+    <div class="comment">
+        <a href="#comment-1" class="comment-border-link">
+            <span class="sr-only">Jump to comment-1</span>
+        </a>
+        {% if not comment.comment.isDeleted %}
+
+            <!-- Comment heading start -->
+            <div class="comment-heading">
+
+                <!-- Comment voting start -->
+                <div class="comment-voting">
+
+                    {% if comment.liked %}
+                        <a class="liked" href="/home/{{comment.comment.comment_id}}/like/comment?next=/home/{{comment.comment.comment_id}}/like/comment">
+                            <span aria-hidden="true" class="ligature">&#9650;</span>
+                            <span class="sr-only">Vote up</span>
+                        </a>
+                    {% else %}
+
+                        <a href="/home/{{comment.comment.comment_id}}/like/comment?next=/home/{{comment.comment.comment_id}}/like/comment">
+                            <span aria-hidden="true" class="ligature">&#9650;</span>
+                            <span class="sr-only">Vote up</span>
+                        </a>
+
+                    {% endif %}
+
+                    {% if comment.disliked %}
+                        <a class="disliked" href="/home/{{comment.comment.comment_id}}/dislike/comment?next=/home/{{comment.comment.comment_id}}/dislike/comment">
+                            <span aria-hidden="true" class="ligature">&#9660;</span>
+                            <span class="sr-only">Vote down</span>
+                        </a>
+                    {% else %}
+                        <a href="/home/{{comment.comment.comment_id}}/dislike/comment?next=/home/{{comment.comment.comment_id}}/dislike/comment">
+                            <span aria-hidden="true" class="ligature">&#9660;</span>
+                            <span class="sr-only">Vote down</span>
+                        </a>
+                    {% endif %}
+                    
+                </div>
+                <!-- Comment voting end -->
+
+                <!-- Comment info (author, # of votes, time added) start -->
+                <div class="comment-info">
+
+                        <div class="author-pin">
+                            
+                            <a href="/home/{{comment.comment.comment_user.id}}/blogs" class="comment-author">
+                                <span class="comment-author">
+                                    {{comment.comment.comment_user.first_name}}
+                                </span>
+                                
+                                
+                            </a>
+                            <span class="pin-control">
+                                {% if blog.user.id == request.user.id %}
+                                    {% if comment.comment.is_pinned %}
+                                        <a href="/home/{{comment.comment.comment_id}}/pin/comment?next={{request.path}}" class="pin-comment"><i class="bi-pin-fill"></i></a>
+                                    {% else %}
+                                        <a href="/home/{{comment.comment.comment_id}}/pin/comment?next={{request.path}}" class="pin-comment"><i class="bi-pin"></i></a>
+                                    {% endif %}
+
+                                {% elif comment.comment.is_pinned %}
+                                    <span class="pin-comment"><i class="bi-pin-fill"></i></span>
+                                {% endif %}
+                            </span>
+
+                            
+                        </div>
+
+                    <p>
+                        {{ comment.comment.noOfLikes }} Likes • {{ comment.comment.noOfDisLikes}} Dislikes• {{ comment.comment.creation_timestamp }}
+                    </p>
+                </div>
+                <!-- Comment info (author, # of votes, time added) end -->
+            </div>
+            <!-- Comment heading end -->
+
+            <!-- Comment body start -->
+            <div class="comment-body">
+                <p>
+                {{comment.comment.body}}
+                </p>
+                <span class="controls">
+
+                    <span class="update-delete-controls">
+                        {% if request.user.id == comment.comment.comment_user.id %}
+
+                            {% if comment.comment.isRoot %}
+                                <a href="{{blog.blogid}}/{{comment.comment.comment_id}}/update/comment?next={{request.path|urlencode}}" class="comment-control btn btn-warning"><i class="bi-pencil-square"></i></a>
+                                <a href="{{blog.blogid}}/{{comment.comment.comment_id}}/delete/comment?next={{request.path|urlencode}}" class="comment-control btn btn-danger"><i class="bi-trash-fill"></i></a>
+                            {% else %}
+                                <a href="{{blog.blogid}}/{{comment.root_comment_id}}/{{comment.comment.comment_id}}/update/reply/comment?next={{request.path|urlencode}}" class="comment-control btn btn-warning"><i class="bi-pencil-square"></i></a>
+                                <a href="{{blog.blogid}}/{{comment.root_comment_id}}/{{comment.comment.comment_id}}/delete/reply/comment?next={{request.path|urlencode}}" class="comment-control btn btn-danger"><i class="bi-trash-fill"></i></a>
+                            {% endif %}
+                        {% endif %}
+                    
+                    </span>
+                    
+                    {% if request.user.id != comment.comment.comment_user.id %}
+                        <span class="reply-control">
+                            <a href="{{blog.blogid}}/{{comment.comment.comment_id}}/reply/comment?next={{request.path|urlencode}}" 
+                                class="btn btn-warning comment-control">
+                                    <i class="bi-reply-fill"></i>
+                            </a>
+                        </span>
+                    {% endif %}
+                </span>
+            </div>
+            
+        {% else %}
+
+            <!-- Comment heading start -->
+            <div class="comment-heading">
+
+                <!-- Comment voting end -->
+
+                <!-- Comment info (author, # of votes, time added) start -->
+                <div class="comment-info">
+                    <a href="#" class="comment-author">{{comment.comment.comment_user.first_name}}</a>
+                    <p>
+                        {{ "# of votes" }} • {{ comment.comment.creation_timestamp }}
+                    </p>
+                </div>
+                <!-- Comment info (author, # of votes, time added) end -->
+            </div>
+            <!-- Comment heading end -->
+
+            <!-- Comment body start -->
+            <div class="comment-body">
+                <p>Comment has been deleted</p>
+                <span class="controls">
+
+                    <span class="update-delete-controls">
+                        {% if request.user.id == comment.comment.comment_user.id %}
+                            <a 
+                                href="{{blog.blogid}}/{{comment.root_comment_id}}/{{comment.comment.comment_id}}/delete/reply/comment?next={{request.path|urlencode}}" 
+                                class="comment-control btn btn-success">
+                                <i class="bi-arrow-counterclockwise"></i>
+                            </a>                
+                        {% endif %}
+                    
+                    </span>
+                    
+
+                </span>
+            </div>
+
+        {% endif %}
+            
+        <!-- Replies start -->
+
+        {% if comment.replies|length %}
+            <div class="replies">
+                {% include "blog/comments.html" with comments=comment.replies blog=blog %}
+            </div>
+        {% endif %}
+        <!-- Replies end -->
+
+    </div>
+
+{% endfor %}

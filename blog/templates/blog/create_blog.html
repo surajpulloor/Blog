@@ -1,0 +1,24 @@
+{% extends 'blog/base.html' %}
+
+{% block title%}{{formtype}} a blog {% endblock %}
+
+{%block body%}
+
+    <h1>{{formtype}} a blog</h1>
+
+    {% if formtype == 'Create' %}
+        <form method="POST" action="{% url 'blog:create_blog' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-primary" value="Create Blog">
+        </form>
+    {% else %}
+        <form method="POST" action="{{ blogid }}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" class="btn btn-primary" value="{{ formtype }} Blog">
+        </form>
+    {% endif %}
+
+
+{%endblock%}

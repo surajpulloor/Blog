@@ -1,0 +1,87 @@
+{% extends 'blog/base.html' %}
+
+{% block title%}DashBoard{%endblock%}
+
+
+{% block body%}
+<h1>Welcome, {{ user.first_name }}.</h1>
+
+{% if blogs|length == 0%}
+    <h1>You don't have any blogs. Please create one <a href="{% url 'blog:create_blog' %}">Click Here</a></h1>
+{% else %}
+    <h1>Here are your blogs</h1>
+    <table class="table">
+        <tr>
+            <th>Title</th>
+            <th>Views</th>
+            <th>Likes</th>
+            <th>Dis-Likes</th>
+            <th>Comments</th>
+            <th>Creation TimeStamp</th>
+            <th>Modified TimeStamp</th>
+            <th>Visible</th>
+            <th>No. of tags</th>
+            <th>Tags</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        {% for blog in blogs %}
+            <tr>
+                <td><a href="/home/{{blog.blogid}}">{{blog.title}}</a></td>
+                <td>{{blog.numberOfViews}}</td>
+                <td>{{blog.noOfLikes}}</td>
+                <td>{{blog.noOfDisLikes}}</td>
+                <td>{{blog.noOfComments}}</td>
+                <td>{{blog.creation_timestamp}}</td>
+                <td>{{blog.modified_timestamp}}</td>
+                <td>{{blog.isVisible}}</td>
+                <td>{{blog.noOfTags}}</td>
+                <td>
+                    <ul class="tags">
+                        {% for tag in blog.tags.all %}
+                            <li class="tag">{{tag}}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+                <td><a href="update/{{blog.blogid}}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                <td><a href="delete/{{blog.blogid}}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
+            </tr>
+        {% endfor %}
+    
+    </table>
+
+    <a href="{% url 'blog:create_blog'%}" class="btn btn-primary">Create a new Blog</a>
+
+{% endif %}
+
+
+{% if tags|length %}
+    
+    <h1>Here are your tags</h1>
+    <table class="table">
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+        {% for tag in tags %}
+            <tr>
+                <td>{{tag.tagid}}</td>
+                <td>{{tag.tag_name}}</td>
+                <td><a href="/home/{{tag.tagid}}/update/tag" class="tag-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                <td><a href="/home/{{tag.tagid}}/delete/tag" class="tag-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
+            </tr>
+        {% endfor %}
+    
+    </table>
+
+    <a href="{% url 'blog:create_tag'%}" class="btn btn-primary">Create a new tag</a>
+
+
+
+{% else %}
+    <h1>You don't have any tags. Please create one <a href="{% url 'blog:create_tag' %}">Click Here</a></h1>
+{% endif %}
+
+{%endblock%}

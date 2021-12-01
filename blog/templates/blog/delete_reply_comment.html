@@ -1,0 +1,37 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {% if reply_comment.isDeleted %}
+        Restore Reply to a Comment
+    {% else %}
+        Delete Reply to a Comment
+    {% endif %}
+{% endblock title %}
+
+
+{% block body %}
+
+    {% if reply_comment.isDeleted %}
+
+        <h1>Restore Reply to &quot;{{ comment.body }}&quot; by &quot;{{ comment.comment_user.first_name }}&quot; on: &quot;{{blog.title}}&quot;</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" value="Restore Reply" class="btn btn-primary">
+        </form>
+
+    {% else %}
+
+        <h1>Delete Reply to &quot;{{ comment.body }}&quot; by &quot;{{ comment.comment_user.first_name }}&quot; on: &quot;{{blog.title}}&quot;</h1>
+
+        <form method="post">
+            {% csrf_token %}
+            {{form}}
+            <input type="submit" value="Delete Reply" class="btn btn-primary">
+        </form>
+
+    {% endif %}
+
+
+{% endblock body %}
