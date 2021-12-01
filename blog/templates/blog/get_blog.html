@@ -28,7 +28,7 @@
             <h6>{{blog.noOfDisLikes}} Dislikes</h6>
         </div>
 
-        <p class="blog-body">{{blog.body}}</p>
+        <p class="blog-body">{{blog.body.html|safe}}</p>
 
         <ul class="tags">
             {% for tag in blog.tags.all %}

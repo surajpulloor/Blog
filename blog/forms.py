@@ -4,14 +4,14 @@ from django.contrib.auth.models import User
 
 from blog.models import Blog, Comment, Tags
 
+
+
 class LoginForm(forms.Form):
     
     username = forms.CharField(max_length=20, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), max_length=20)
 
     
-
-
 class SignUpForm(forms.ModelForm):
 
     class Meta:
@@ -57,7 +57,6 @@ class BlogForm(forms.ModelForm):
         fields = ['title', 'body', 'isVisible', 'tags']
         widgets = {
             'title': forms.TextInput(attrs={'class': "form-control", 'autofocus': True}),
-            'body': forms.Textarea(attrs={'cols': 40, 'rows': 20, 'class': "form-control"}),
             'tags': forms.CheckboxSelectMultiple()
         }
 

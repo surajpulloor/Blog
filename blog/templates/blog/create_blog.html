@@ -1,6 +1,9 @@
 {% extends 'blog/base.html' %}
 
 {% block title%}{{formtype}} a blog {% endblock %}
+{% block head %}
+    {{ form.media }}
+{% endblock head %}
 
 {%block body%}
 

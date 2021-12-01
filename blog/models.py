@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django_quill.fields import QuillField
+
 
 class Tags(models.Model):
     tagid = models.BigAutoField(primary_key=True)
@@ -15,7 +17,7 @@ class Tags(models.Model):
 class Blog(models.Model):
     blogid = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=100)
-    body = models.CharField(max_length=700)
+    body = QuillField()
     creation_timestamp = models.DateTimeField(auto_now_add=True)
     modified_timestamp = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
