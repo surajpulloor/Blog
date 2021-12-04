@@ -1,0 +1,47 @@
+{% extends 'blog/base.html' %}
+
+{% block title%}Update a blog {% endblock %}
+{% block head %}
+    {{ form.media }}
+{% endblock head %}
+
+{% block modal_body %}
+    Are you sure you want to update?
+{% endblock modal_body %}
+
+{% block btn_type %}Update Blog{% endblock btn_type %}
+
+{%block body%}
+
+    <h1>Update a blog</h1>
+
+    
+    <form method="POST" action="{{ blogid }}" id="update_form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="button" class="btn btn-primary" value="Update Blog"
+            onclick="invokeModal()"
+        >
+    </form>
+
+
+{%endblock%}
+
+
+{% block script %}
+    <script>
+
+        function invokeModal(e) {
+            var modal = new bootstrap.Modal(document.getElementById('confirm-modal'), {
+                keyboard: false
+            });
+            modal.show();
+        }
+
+        function submit_form(e) {
+            let form = document.getElementById('update_form');
+            form.submit();
+        }
+
+    </script>
+{% endblock script %}

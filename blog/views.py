@@ -147,7 +147,7 @@ def create_blog(req):
         else:
             form = BlogForm()
 
-        return render(req, 'blog/create_blog.html', {'form': form, 'formtype': 'Create'})
+        return render(req, 'blog/create_blog.html', {'form': form})
 
     else:
         return HttpResponseRedirect(reverse('blog:login'))
@@ -363,7 +363,7 @@ def update_blog(req, blogid):
         else:
             form = BlogForm(instance=blog)
 
-        return render(req, 'blog/create_blog.html', {'form': form, 'formtype': 'Update', 'blogid': blogid})
+        return render(req, 'blog/update_blog.html', {'form': form, 'blogid': blogid})
 
     return HttpResponseRedirect(reverse('blog:login'))
                         
@@ -381,7 +381,7 @@ def delete_blog(req, blogid):
         else:
             form = DisabledBlogForm(instance=blog)
 
-        return render(req, 'blog/create_blog.html', {'form': form, 'formtype': 'Delete', 'blogid': blogid})
+        return render(req, 'blog/delete_blog.html', {'form': form, 'blogid': blogid})
 
 
     return HttpResponseRedirect(reverse('blog:login'))
