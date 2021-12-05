@@ -3,14 +3,21 @@
 {% block title %}Update Comment{% endblock title %}
 
 
+{% block modal_body %}
+    Are you sure you want to update?
+{% endblock modal_body %}
+
+{% block btn_type %}Update Comment{% endblock btn_type %}
+
+
 {% block body %}
 
     <h1>Update a Comment on: {{blog.title}}</h1>
 
-    <form action="" method="post">
+    <form method="post" id="form">
         {% csrf_token %}
         {{form}}
-        <input type="submit" value="Update Comment" class="btn btn-primary">
+        <input type="button" value="Update Comment" class="btn btn-primary" onclick="invokeModal()">
     </form>
 
 {% endblock body %}

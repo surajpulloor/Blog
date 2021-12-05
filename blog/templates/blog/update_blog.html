@@ -16,7 +16,7 @@
     <h1>Update a blog</h1>
 
     
-    <form method="POST" action="{{ blogid }}" id="update_form">
+    <form method="POST" action="{{ blogid }}" id="form">
         {% csrf_token %}
         {{ form.as_p }}
         <input type="button" class="btn btn-primary" value="Update Blog"

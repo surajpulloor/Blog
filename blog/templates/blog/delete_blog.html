@@ -15,32 +15,11 @@
 
     <h1>Delete a blog</h1>
 
-    <form method="POST" action="{{ blogid }}" id="update_form">
+    <form method="POST" action="{{ blogid }}" id="form">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="button" class="btn btn-primary" value="Delete Blog"
-            onclick="invokeModal()"
-        >
+        <input type="button" class="btn btn-primary" value="Delete Blog" onclick="invokeModal()">
     </form>
 
 
 {%endblock%}
-
-
-{% block script %}
-    <script>
-
-        function invokeModal(e) {
-            var modal = new bootstrap.Modal(document.getElementById('confirm-modal'), {
-                keyboard: false
-            });
-            modal.show();
-        }
-
-        function submit_form(e) {
-            let form = document.getElementById('update_form');
-            form.submit();
-        }
-
-    </script>
-{% endblock script %}

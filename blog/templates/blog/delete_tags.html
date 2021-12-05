@@ -7,13 +7,20 @@
 {% endblock title %}
 
 
+{% block modal_body %}
+    Are you sure you want to delete?
+{% endblock modal_body %}
+
+{% block btn_type %}Delete Tag{% endblock btn_type %}
+
+
 {% block body %}
 
     <form action="/home/{{tag.tagid}}/delete/tag" method="post">
         {% csrf_token %}
         {{ form }}
 
-        <input type="submit" value="Delete Tag" class="btn btn-primary">
+        <input type="button" value="Delete Tag" class="btn btn-primary" class="invokeModal()">
     </form>
 
 {% endblock body %}
