@@ -12,7 +12,7 @@ from blog.exceptions import ReplyToCommentBySameUser
 
 from .forms import LoginForm, SignUpForm, BlogForm, CommentForm, DisabledCommentForm, DisabledBlogForm, TagForm, DisabledTagForm
 
-from .models import Blog, Blog_Likes_DisLikes_PerUser, Comment, Comment_Likes_DisLikes_PerUser, Tags
+from .models import Blog, Comment, Comment_Likes_DisLikes_PerUser, Tags
 
 
 def login_form(req):
@@ -20,7 +20,7 @@ def login_form(req):
     hasUsers = True
 
     if req.user.is_authenticated:
-        return HttpResponseRedirect(reverse('blog:dashboard'))
+        return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
     elif User.objects.count() == 0:
         hasUsers = False
@@ -46,7 +46,7 @@ def login_form(req):
                     if next != '/':
                         return HttpResponseRedirect(next)
                     else:
-                        return HttpResponseRedirect(reverse('blog:dashboard'))
+                        return HttpResponseRedirect(reverse('blog:dashboard_home'))
                 else:
                     try:
                         user = User.objects.get(username=form.cleaned_data['username'])
@@ -142,7 +142,7 @@ def create_blog(req):
                 blog.noOfTags = noOfTags
                 blog.save()
 
-                return HttpResponseRedirect(reverse('blog:dashboard'))
+                return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
         else:
             form = BlogForm()
@@ -206,9 +206,6 @@ def get_blog(req, blog):
         if req.GET.get('next', '/') == '/':
             blog.numberOfViews += 1
 
-            
-        blog.save()
-
 
         liked = False
         disLiked = False
@@ -217,10 +214,10 @@ def get_blog(req, blog):
         if req.user.is_authenticated:
 
             # get Likes per User obj
-            if Blog_Likes_DisLikes_PerUser.objects.filter(blog=blog, user=User.objects.get(pk=req.user.id)).count() != 0:
-                like_dislike_peruser = Blog_Likes_DisLikes_PerUser.objects.get(blog=blog, user=User.objects.get(pk=req.user.id))
-                liked = like_dislike_peruser.liked
-                disLiked = like_dislike_peruser.disliked
+            if blog.liked_users.filter(id=req.user.id).count():
+                liked = True
+            elif blog.disliked_users.filter(id=req.user.id).count():
+                disLiked = True
 
             user = req.user
 
@@ -231,6 +228,9 @@ def get_blog(req, blog):
         comments = list(pinned_comments) + list(unpinned_comment)
 
         comment_section = get_comment_section(comments=comments, auth_user=user)
+
+
+        blog.save()
 
         
         return render(req, 'blog/get_blog.html', {'blog': blog, 'liked': liked, 'disLiked': disLiked, 'comments': comment_section})
@@ -246,32 +246,22 @@ def set_like(req, blogid):
             blog = get_object_or_404(Blog, pk=blogid)
 
 
-            if Blog_Likes_DisLikes_PerUser.objects.filter(blog=blog, user=req.user).count() == 0:
-
-                blog_likes_per_user = Blog_Likes_DisLikes_PerUser.objects.create(blog = blog, user = req.user, liked = True)
+            if blog.liked_users.filter(id=req.user.id).count() == 0:
+                blog.liked_users.add(req.user)
                 blog.noOfLikes += 1
-            else:
-                blog_likes_per_user = Blog_Likes_DisLikes_PerUser.objects.get(blog=blog, user=User.objects.get(pk=req.user.id))
 
-                if not blog_likes_per_user.liked:
-                    blog.noOfLikes += 1
-
-                    if blog_likes_per_user.disliked:
-                        blog.noOfDisLikes -= 1
-
-                else:    
-                    blog.noOfLikes -= 1
-
-                blog_likes_per_user.liked = not blog_likes_per_user.liked
-                blog_likes_per_user.disliked = False
+                if blog.disliked_users.filter(id=req.user.id).count():
+                    blog.disliked_users.remove(req.user)
+                    blog.noOfDisLikes -= 1
+            else:    
+                blog.liked_users.remove(req.user)
+                blog.noOfLikes -= 1
 
 
-
-            blog_likes_per_user.save()
             blog.save()
 
 
-            return HttpResponseRedirect('/home/' + str(blog.blogid) + "?next=0")
+            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
         else:
             next = req.GET.get('next', '/')
             return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
@@ -287,33 +277,21 @@ def set_dislike(req, blogid):
 
             blog = get_object_or_404(Blog, pk=blogid)
 
-
-            if Blog_Likes_DisLikes_PerUser.objects.filter(blog=blog, user=req.user).count() == 0:
-
-                blog_likes_per_user = Blog_Likes_DisLikes_PerUser.objects.create(blog = blog, user = req.user, disliked = True)
+            if blog.disliked_users.filter(id=req.user.id).count() == 0:
+                blog.disliked_users.add(req.user)
                 blog.noOfDisLikes += 1
-            else:
-                blog_likes_per_user = Blog_Likes_DisLikes_PerUser.objects.get(blog=blog, user=User.objects.get(pk=req.user.id))
 
-                if not blog_likes_per_user.disliked:
-                    blog.noOfDisLikes += 1
-
-                    if blog_likes_per_user.liked:
-                        blog.noOfLikes -= 1
+                if blog.liked_users.filter(id=req.user.id).count():
+                    blog.liked_users.remove(req.user)
+                    blog.noOfLikes -= 1
+            else:    
+                blog.disliked_users.remove(req.user)
+                blog.noOfDisLikes -= 1
                         
-                else:    
-                    blog.noOfDisLikes -= 1
-
-                blog_likes_per_user.disliked = not blog_likes_per_user.disliked
-                blog_likes_per_user.liked = False
-
-
-
-            blog_likes_per_user.save()
             blog.save()
 
 
-            return HttpResponseRedirect('/home/' + str(blog.blogid)  + "?next=0")
+            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
         else:
             next = req.GET.get('next', '/')
             return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
@@ -358,7 +336,7 @@ def update_blog(req, blogid):
                 blog.save()
 
 
-                return HttpResponseRedirect(reverse('blog:dashboard'))
+                return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
         else:
             form = BlogForm(instance=blog)
@@ -376,7 +354,7 @@ def delete_blog(req, blogid):
         if req.method == 'POST':
             form = DisabledBlogForm(req.POST)
             Blog.objects.filter(pk=blogid).delete()
-            return HttpResponseRedirect(reverse('blog:dashboard'))
+            return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
         else:
             form = DisabledBlogForm(instance=blog)
@@ -414,7 +392,7 @@ def add_comment(req, blogid):
                     b.save()
                     c.save()
 
-                    return HttpResponseRedirect("/home/" + str(blogid) + "?next=0")
+                    return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
             else:
                 form = CommentForm()
 
@@ -448,7 +426,7 @@ def update_comment(req, blogid, commentid):
                         c.body = form.cleaned_data['body']
                         c.save()
 
-                        return HttpResponseRedirect("/home/" + str(blogid) + "?next=0")
+                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
                 else:
                     form = CommentForm(initial={'body': c.body})
 
@@ -493,7 +471,7 @@ def delete_comment(req, blogid, commentid):
                     b.save()
                     c.delete()
 
-                    return HttpResponseRedirect("/home/" + str(blogid) + "?next=0")
+                    return HttpResponseRedirect(reverse('blog:get_blog', blogid) + "?next=0")
 
                 else:
                     form = DisabledCommentForm(initial={'body': c.body})
@@ -568,7 +546,7 @@ def create_reply_comment(req, blogid, commentid):
                         b.save()
                         reply_comment.save()
 
-                        return HttpResponseRedirect("/home/" + str(blogid) + "?next=0")
+                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
             
                 else:
                     form = CommentForm()
@@ -616,7 +594,7 @@ def update_reply_comment(req, blogid, commentid, reply_commentid):
                         reply_comment.body = form.cleaned_data['body']
                         reply_comment.save()
 
-                        return HttpResponseRedirect("/home/" + str(blogid) + "?next=0")
+                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
                 else:
                     form = CommentForm(initial={'body': reply_comment.body})
 
@@ -685,7 +663,7 @@ def delete_reply_comment(req, blogid, commentid, reply_commentid):
                     b.save()
                         
 
-                    return HttpResponseRedirect("/home/" + str(blogid) + "?next=0")
+                    return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
 
                 else:
                     form = DisabledCommentForm(initial={'body': reply_comment.body})
@@ -812,7 +790,7 @@ def create_tag(req):
                 tag.user = req.user
                 tag.save()
 
-                return HttpResponseRedirect(reverse('blog:dashboard'))
+                return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
         else:
 
@@ -840,7 +818,7 @@ def update_tag(req, tagid):
                 tag.tag_name = form.cleaned_data['tag_name']
                 tag.save()
 
-                return HttpResponseRedirect(reverse('blog:dashboard'))
+                return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
         else:
 
@@ -871,7 +849,7 @@ def delete_tag(req, tagid):
 
             tag.delete()
 
-            return HttpResponseRedirect(reverse('blog:dashboard'))
+            return HttpResponseRedirect(reverse('blog:dashboard_home'))
 
         else:
 
@@ -899,3 +877,33 @@ def pin_comment(req, commentid):
     next = req.GET.get('next', '/')
 
     return HttpResponseRedirect(next)
+
+
+def blog_likes_per_user(req):
+    
+    if req.user.is_authenticated:
+
+        blog_likes_by_user = Blog.objects.filter(liked_users__id=req.user.id)
+
+        return render(req, 'blog/get_likes_per_blog.html', {'blog_likes': blog_likes_by_user})
+
+    else:
+        next = req.GET.get('next', '/')
+        return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
+
+
+
+def blog_dislikes_per_user(req):
+    pass
+    
+def comment_likes_per_user(req):
+    pass
+    
+def comment_dislikes_per_user(req):
+    pass
+    
+def comments_given_per_user(req):
+    pass
+    
+def replies_given_per_user(req):
+    pass

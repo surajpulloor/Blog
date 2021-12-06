@@ -1,0 +1,34 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    Blog's liked
+{% endblock title %}
+
+{% block body %}
+    {% if blog_likes|length %}
+
+        <h1>Blog's liked by you</h1>
+        <table class="table">
+            <tr>
+                <th>Blog Name</th>
+                <th>Author</th>
+            </tr>
+            {% for blog_like in blog_likes %}
+                <tr>
+                    <td><a href="/home/{{blog_like.blogid}}" target="_blank">{{blog_like.title}}</a></td>
+                    <td>
+                        {{blog_like.user.first_name}}
+                        {% if request.user == blog_like.user %}
+                            (You)
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% endfor %}
+        
+        </table>
+    {% else %}
+        <h1>Sorry, you have not liked any blogs till date.</h1>
+    {% endif %}
+
+{% endblock body %}
