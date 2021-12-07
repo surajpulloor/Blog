@@ -12,7 +12,7 @@ from blog.exceptions import ReplyToCommentBySameUser
 
 from .forms import LoginForm, SignUpForm, BlogForm, CommentForm, DisabledCommentForm, DisabledBlogForm, TagForm, DisabledTagForm
 
-from .models import Blog, Comment, Comment_Likes_DisLikes_PerUser, Tags
+from .models import Blog, Comment, Tags
 
 
 def login_form(req):
@@ -863,7 +863,7 @@ def blog_likes_per_user(req):
 
         blog_likes_by_user = Blog.objects.filter(liked_users__id=req.user.id)
 
-        return render(req, 'blog/get_likes_per_user.html', {'blog_likes': blog_likes_by_user})
+        return render(req, 'blog/get_blog_likes_per_user.html', {'blog_likes': blog_likes_by_user})
 
     else:
         next = req.GET.get('next', '/')
@@ -876,17 +876,33 @@ def blog_dislikes_per_user(req):
 
         blog_dislikes_by_user = Blog.objects.filter(disliked_users__id=req.user.id)
 
-        return render(req, 'blog/get_dislikes_per_user.html', {'blog_dislikes': blog_dislikes_by_user})
+        return render(req, 'blog/get_blog_dislikes_per_user.html', {'blog_dislikes': blog_dislikes_by_user})
 
     else:
         next = req.GET.get('next', '/')
         return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
     
 def comment_likes_per_user(req):
-    pass
+    if req.user.is_authenticated:
+
+        comment_likes_by_user = Comment.objects.filter(liked_users__id=req.user.id)
+
+        return render(req, 'blog/get_comment_likes_per_user.html', {'comment_likes': comment_likes_by_user})
+
+    else:
+        next = req.GET.get('next', '/')
+        return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
     
 def comment_dislikes_per_user(req):
-    pass
+    if req.user.is_authenticated:
+
+        comment_dislikes_by_user = Comment.objects.filter(disliked_users__id=req.user.id)
+
+        return render(req, 'blog/get_comment_dislikes_per_user.html', {'comment_dislikes': comment_dislikes_by_user})
+
+    else:
+        next = req.GET.get('next', '/')
+        return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
     
 def comments_given_per_user(req):
     pass

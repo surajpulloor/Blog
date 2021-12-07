@@ -256,9 +256,19 @@
                                     </a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                         <li><a class="dropdown-item" href="{% url 'blog:dashboard_home' %}">Dashboard</a></li>
+                                        
+                                        <li><hr class="dropdown-divider"></li>
+                                        
                                         <li><a class="dropdown-item" href="{% url 'blog:dashboard_get_blog_likes' %}">Blog Likes</a></li>
                                         <li><a class="dropdown-item" href="{% url 'blog:dashboard_get_blog_dislikes' %}">Blog DisLikes</a></li>
+                                        
                                         <li><hr class="dropdown-divider"></li>
+                                        
+                                        <li><a class="dropdown-item" href="{% url 'blog:dashboard_get_comment_likes' %}">Comment Likes</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'blog:dashboard_get_comment_dislikes' %}">Comment DisLikes</a></li>
+                                        
+                                        <li><hr class="dropdown-divider"></li>
+                                        
                                         <li><a class="dropdown-item" href="/home/signout?next={{request.path}}">Signout</a></li>
                                     </ul>
                                 </li>
