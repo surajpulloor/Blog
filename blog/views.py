@@ -894,7 +894,15 @@ def blog_likes_per_user(req):
 
 
 def blog_dislikes_per_user(req):
-    pass
+    if req.user.is_authenticated:
+
+        blog_dislikes_by_user = Blog.objects.filter(disliked_users__id=req.user.id)
+
+        return render(req, 'blog/get_dislikes_per_user.html', {'blog_dislikes': blog_dislikes_by_user})
+
+    else:
+        next = req.GET.get('next', '/')
+        return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
     
 def comment_likes_per_user(req):
     pass
