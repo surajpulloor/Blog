@@ -885,7 +885,7 @@ def blog_likes_per_user(req):
 
         blog_likes_by_user = Blog.objects.filter(liked_users__id=req.user.id)
 
-        return render(req, 'blog/get_likes_per_blog.html', {'blog_likes': blog_likes_by_user})
+        return render(req, 'blog/get_likes_per_user.html', {'blog_likes': blog_likes_by_user})
 
     else:
         next = req.GET.get('next', '/')
