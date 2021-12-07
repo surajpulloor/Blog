@@ -713,7 +713,12 @@ def set_comment_like(req, commentid):
             comment.save()
 
 
-            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
+            next = req.GET.get('next', '/')
+
+            if next != '/':
+                return HttpResponseRedirect(next)
+            else:
+                return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
         else:
             next = req.GET.get('next', '/')
             return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
@@ -746,7 +751,12 @@ def set_comment_dislike(req, commentid):
             comment.save()
 
 
-            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
+            next = req.GET.get('next', '/')
+
+            if next != '/':
+                return HttpResponseRedirect(next)
+            else:
+                return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
         else:
             next = req.GET.get('next', '/')
             return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
