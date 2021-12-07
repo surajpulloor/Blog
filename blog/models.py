@@ -70,14 +70,9 @@ class Comment(models.Model):
     is_pinned = models.BooleanField(default=False)
     pinned_timestamp = models.DateTimeField()
 
+    liked_users = models.ManyToManyField(User, blank=True, related_name='blog_comment_liked_users')
+    disliked_users = models.ManyToManyField(User, blank=True, related_name='blog_comment_disliked_users')
+
 
     def __str__(self):
         return "Comment " + str(self.comment_id)
-    
-
-
-class Comment_Likes_DisLikes_PerUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    liked = models.BooleanField(default=False)
-    disliked = models.BooleanField(default=False)

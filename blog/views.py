@@ -167,15 +167,15 @@ def get_comment_section(comments, auth_user, root_comment_id=-1):
 
     # go through all the comments
     for comment in comments:
-        
+
+        liked = False
+        disliked = False
+
         # find out whether the comment is liked or not by the auth user
-        if auth_user and Comment_Likes_DisLikes_PerUser.objects.filter(comment=comment, user=auth_user).count() > 0:
-            comment_LD_perUser = Comment_Likes_DisLikes_PerUser.objects.get(comment=comment, user=auth_user)
-            liked = comment_LD_perUser.liked
-            disliked = comment_LD_perUser.disliked
-        else:
-            liked = False
-            disliked = False
+        if auth_user and comment.liked_users.filter(id=auth_user.id).count() > 0:
+            liked = True
+        elif auth_user and comment.disliked_users.filter(id=auth_user.id).count() > 0:
+            disliked = True
 
         comment_replies = {
             'comment': comment,
@@ -617,7 +617,7 @@ def update_reply_comment(req, blogid, commentid, reply_commentid):
         raise Http404('The Comment does not exists')
 
     except ReplyToCommentBySameUser:
-        raise Http404("You cannot update this reply comment.")
+        raise Http404("You cannot update this    liked_users = models.ManyToManyField(User, blank=True, related_name='blog_comment_liked_users') reply comment.")
 
 
 
@@ -699,33 +699,21 @@ def set_comment_like(req, commentid):
 
             comment = get_object_or_404(Comment, pk=commentid)
 
-
-            if Comment_Likes_DisLikes_PerUser.objects.filter(comment=comment, user=req.user).count() == 0:
-
-                comment_LD_per_user = Comment_Likes_DisLikes_PerUser.objects.create(comment = comment, user = req.user, liked = True)
-                comment.noOfLikes += 1
+            if comment.liked_users.filter(id=req.user.id).count():
+                comment.noOfLikes -= 1
+                comment.liked_users.remove(req.user)
             else:
-                comment_LD_per_user = Comment_Likes_DisLikes_PerUser.objects.get(comment=comment, user=req.user)
+                comment.noOfLikes += 1
+                comment.liked_users.add(req.user)
 
-                if not comment_LD_per_user.liked:
-                    comment.noOfLikes += 1
-
-                    if comment_LD_per_user.disliked:
-                        comment.noOfDisLikes -= 1
-
-                else:    
-                    comment.noOfLikes -= 1
-
-                comment_LD_per_user.liked = not comment_LD_per_user.liked
-                comment_LD_per_user.disliked = False
-
-
-
-            comment_LD_per_user.save()
+                if comment.disliked_users.filter(id=req.user.id).count():
+                    comment.noOfDisLikes -= 1
+                    comment.disliked_users.remove(req.user)            
+                        
             comment.save()
 
 
-            return HttpResponseRedirect('/home/' + str(comment.blog.blogid) + "?next=0")
+            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
         else:
             next = req.GET.get('next', '/')
             return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
@@ -743,32 +731,22 @@ def set_comment_dislike(req, commentid):
             comment = get_object_or_404(Comment, pk=commentid)
 
 
-            if Comment_Likes_DisLikes_PerUser.objects.filter(comment=comment, user=req.user).count() == 0:
-
-                comment_LD_per_user = Comment_Likes_DisLikes_PerUser.objects.create(comment = comment, user = req.user, disliked = True)
-                comment.noOfDisLikes += 1
+            if comment.disliked_users.filter(id=req.user.id).count():
+                comment.noOfDisLikes -= 1
+                comment.disliked_users.remove(req.user)
             else:
-                comment_LD_per_user = Comment_Likes_DisLikes_PerUser.objects.get(comment=comment, user=req.user)
+                comment.noOfDisLikes += 1
+                comment.disliked_users.add(req.user)
 
-                if not comment_LD_per_user.disliked:
-                    comment.noOfDisLikes += 1
-
-                    if comment_LD_per_user.liked:
-                        comment.noOfLikes -= 1
+                if comment.liked_users.filter(id=req.user.id).count():
+                    comment.noOfLikes -= 1
+                    comment.liked_users.remove(req.user)            
                         
-                else:    
-                    comment.noOfDisLikes -= 1
-
-                comment_LD_per_user.disliked = not comment_LD_per_user.disliked
-                comment_LD_per_user.liked = False
-
-
-
-            comment_LD_per_user.save()
+            
             comment.save()
 
 
-            return HttpResponseRedirect('/home/' + str(comment.blog.blogid) + "?next=0")
+            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
         else:
             next = req.GET.get('next', '/')
             return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
