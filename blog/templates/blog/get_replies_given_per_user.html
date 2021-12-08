@@ -10,19 +10,28 @@
         <h1>Replies given by you</h1>
         <table class="table">
             <tr>
+                <th>Sr No.</th>
+                <th>Reply To</th>
                 <th>Reply Body</th>
                 <th>Total Likes</th>
                 <th>Total Dislikes</th>
                 <th>Blog</th>
                 <th>Blog Author</th>
-                {% comment %} <th>Update</th>
-                <th>Delete</th> {% endcomment %}
+                <th>Update</th>
+                <th>Delete</th>
             </tr>
             {% for reply_given in replies_given %}
                 <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>
+                        <span class="has-tooltip"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="{{reply_given.head_comment.body}}" class="has-tooltip">
+                            {{reply_given.head_comment.comment_user.first_name}}
+                        </span>
+                    </td>
                     <td>{{reply_given.body}}</td>
-                    <td>{{comment_given.noOfLikes}}</td>
-                    <td>{{comment_given.noOfDisLikes}}</td>
+                    <td>{{reply_given.noOfLikes}}</td>
+                    <td>{{reply_given.noOfDisLikes}}</td>
                     <td><a href="{% url 'blog:get_blog' reply_given.blog.blogid %}" target="_blank">{{reply_given.blog.title}}</a></td>
                     <td>
                         {{reply_given.blog.user.first_name}}
@@ -32,8 +41,8 @@
 
                     </td>
 
-                    {% comment %} <td><a href="{% url 'blog:update_comment' comment_given.blog.blogid comment_given.comment_id %}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
-                    <td><a href="{% url 'blog:delete_comment' comment_given.blog.blogid comment_given.comment_id %}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td> {% endcomment %}
+                    <td><a href="{% url 'blog:update_reply' reply_given.blog.blogid reply_given.head_comment.comment_id reply_given.comment_id %}?next={{request.path}}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                    <td><a href="{% url 'blog:delete_reply' reply_given.blog.blogid reply_given.head_comment.comment_id reply_given.comment_id %}?next={{request.path}}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
                 </tr>
             {% endfor %}
         
