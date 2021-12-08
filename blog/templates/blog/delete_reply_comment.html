@@ -8,6 +8,28 @@
     {% endif %}
 {% endblock title %}
 
+{% block modal_body %}
+
+    {% if reply_comment.isDeleted %}
+        
+        Are you sure you want to restore?
+    {% else %}
+        
+        Are you sure you want to delete?
+    {% endif %}
+{% endblock modal_body %}
+
+{% block btn_type %}
+
+    {% if reply_comment.isDeleted %}
+        Restore Tag
+    {% else %}        
+        Delete Tag
+    {% endif %}
+
+{% endblock btn_type %}
+
+
 
 {% block body %}
 
@@ -15,20 +37,20 @@
 
         <h1>Restore Reply to &quot;{{ comment.body }}&quot; by &quot;{{ comment.comment_user.first_name }}&quot; on: &quot;{{blog.title}}&quot;</h1>
 
-        <form method="post">
+        <form method="post" id="form">
             {% csrf_token %}
             {{form}}
-            <input type="submit" value="Restore Reply" class="btn btn-primary">
+            <input type="submit" value="Restore Reply" class="btn btn-primary" onclick="invokeModal()">
         </form>
 
     {% else %}
 
         <h1>Delete Reply to &quot;{{ comment.body }}&quot; by &quot;{{ comment.comment_user.first_name }}&quot; on: &quot;{{blog.title}}&quot;</h1>
 
-        <form method="post">
+        <form method="post" id="form">
             {% csrf_token %}
             {{form}}
-            <input type="submit" value="Delete Reply" class="btn btn-primary">
+            <input type="submit" value="Delete Reply" class="btn btn-primary" onclick="invokeModal()">
         </form>
 
     {% endif %}

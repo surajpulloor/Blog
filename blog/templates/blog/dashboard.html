@@ -27,7 +27,7 @@
         </tr>
         {% for blog in blogs %}
             <tr>
-                <td><a href="/home/{{blog.blogid}}">{{blog.title}}</a></td>
+                <td><a href="/home/{{blog.blogid}}" target="_blank">{{blog.title}}</a></td>
                 <td>{{blog.numberOfViews}}</td>
                 <td>{{blog.noOfLikes}}</td>
                 <td>{{blog.noOfDisLikes}}</td>
@@ -43,8 +43,8 @@
                         {% endfor %}
                     </ul>
                 </td>
-                <td><a href="update/{{blog.blogid}}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
-                <td><a href="delete/{{blog.blogid}}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
+                <td><a href="{% url 'blog:update_blog' blog.blogid %}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                <td><a href="{% url 'blog:delete_blog' blog.blogid %}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
             </tr>
         {% endfor %}
     

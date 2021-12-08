@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from django_quill.fields import QuillField
+
 
 class Tags(models.Model):
     tagid = models.BigAutoField(primary_key=True)
@@ -11,11 +13,17 @@ class Tags(models.Model):
         return self.tag_name
 
 
+class UserAnalytics(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    comments_given = models.ManyToManyField('Comment', blank=True, related_name="comments_given")
+    replies_given = models.ManyToManyField('Comment', blank=True, related_name="replies_given")
+
+
 
 class Blog(models.Model):
     blogid = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=100)
-    body = models.CharField(max_length=700)
+    body = QuillField()
     creation_timestamp = models.DateTimeField(auto_now_add=True)
     modified_timestamp = models.DateTimeField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -25,6 +33,9 @@ class Blog(models.Model):
     noOfDisLikes = models.IntegerField(default=0)
     noOfComments = models.IntegerField(default=0)
     noOfTags = models.IntegerField(default=0)
+
+    liked_users = models.ManyToManyField(User, blank=True, related_name="blog_like_users")
+    disliked_users = models.ManyToManyField(User, blank=True, related_name="blog_dislike_users")
 
     tags = models.ManyToManyField(Tags, blank=True)
 
@@ -53,21 +64,9 @@ class Comment(models.Model):
     is_pinned = models.BooleanField(default=False)
     pinned_timestamp = models.DateTimeField()
 
+    liked_users = models.ManyToManyField(User, blank=True, related_name='blog_comment_liked_users')
+    disliked_users = models.ManyToManyField(User, blank=True, related_name='blog_comment_disliked_users')
+
 
     def __str__(self):
         return "Comment " + str(self.comment_id)
-    
-
-
-class Blog_Likes_DisLikes_PerUser(models.Model):
-    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    liked = models.BooleanField(default=False)
-    disliked = models.BooleanField(default=False)
-
-
-class Comment_Likes_DisLikes_PerUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-    liked = models.BooleanField(default=False)
-    disliked = models.BooleanField(default=False)

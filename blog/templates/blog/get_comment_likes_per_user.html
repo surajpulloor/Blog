@@ -1,0 +1,48 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    Comment's liked
+{% endblock title %}
+
+{% block body %}
+    {% if comment_likes|length %}
+
+        <h1>Comment's liked by you</h1>
+        <table class="table">
+            <tr>
+                <th>Comment Body</th>
+                <th>Comment By</th>
+                <th>Blog</th>
+                <th>Blog Author</th>
+                <th>Like</th>
+                <th>Dislike</th>
+            </tr>
+            {% for comment_like in comment_likes %}
+                <tr>
+                    <td>{{comment_like.body}}</td>
+                    <td>
+                        {{comment_like.comment_user.first_name}}
+                        {% if request.user == comment_like.comment_user %}
+                            (You)
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'blog:get_blog' comment_like.blog.blogid %}" target="_blank">{{comment_like.blog.title}}</a></td>
+                    <td>
+                        {{comment_like.blog.user.first_name}}
+                        {% if request.user == comment_like.blog.user %}
+                            (You)
+                        {% endif %}
+
+                    </td>
+
+                    <td><a href="{% url 'blog:set_comment_like' comment_like.comment_id %}?next={{request.path}}" class="btn btn-primary">Like</a></td>
+                    <td><a href="{% url 'blog:set_comment_dislike' comment_like.comment_id %}?next={{request.path}}" class="btn btn-outline-primary">Dislike</a></td>
+                </tr>
+            {% endfor %}
+        
+        </table>
+    {% else %}
+        <h1>Sorry, you have not liked any comments/replies till date.</h1>
+    {% endif %}
+
+{% endblock body %}

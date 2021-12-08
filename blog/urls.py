@@ -1,7 +1,6 @@
-from django.urls.conf import path
+from django.urls.conf import path, include
 
-from blog.views import (login_form, 
-                        dashboard, 
+from blog.views import (login_form,  
                         signout_form, 
                         get_users, 
                         get_blogs, 
@@ -30,10 +29,12 @@ app_name="blog"
 
 urlpatterns = [
     path('login', login_form, name="login"),
-    path('dashboard', dashboard, name="dashboard"),
     path('signout', signout_form, name="signout"),
     path('', get_users, name="get_users"),
     path('signup', signup, name="signup"),
+
+    # dashboard paths
+    path('dashboard/', include('blog.dashboard_urls'), name="dashboard"),
 
     # blog access
     path('<int:blog>', get_blog, name="get_blog"),

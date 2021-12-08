@@ -1,0 +1,45 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    Comments given
+{% endblock title %}
+
+{% block body %}
+    {% if comments_given|length %}
+
+        <h1>Comments given by you</h1>
+        <table class="table">
+            <tr>
+                <th>Comment Body</th>
+                <th>Total Likes</th>
+                <th>Total Dislikes</th>
+                <th>Blog</th>
+                <th>Blog Author</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+            {% for comment_given in comments_given %}
+                <tr>
+                    <td>{{comment_given.body}}</td>
+                    <td>{{comment_given.noOfLikes}}</td>
+                    <td>{{comment_given.noOfDisLikes}}</td>
+                    <td><a href="{% url 'blog:get_blog' comment_given.blog.blogid %}" target="_blank">{{comment_given.blog.title}}</a></td>
+                    <td>
+                        {{comment_given.blog.user.first_name}}
+                        {% if request.user == comment_given.blog.user %}
+                            (You)
+                        {% endif %}
+
+                    </td>
+
+                    <td><a href="{% url 'blog:update_comment' comment_given.blog.blogid comment_given.comment_id %}?next={{request.path}}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                    <td><a href="{% url 'blog:delete_comment' comment_given.blog.blogid comment_given.comment_id %}?next={{request.path}}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
+                </tr>
+            {% endfor %}
+        
+        </table>
+    {% else %}
+        <h1>Sorry, you have not given any comments till date.</h1>
+    {% endif %}
+
+{% endblock body %}

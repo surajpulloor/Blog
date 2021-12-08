@@ -2,15 +2,22 @@
 
 {% block title %}Update Reply to a Comment{% endblock title %}
 
+{% block modal_body %}
+    Are you sure you want to update?
+{% endblock modal_body %}
+
+{% block btn_type %}Update Reply{% endblock btn_type %}
+
+
 
 {% block body %}
 
     <h1>Update Reply to &quot;{{ comment.body }}&quot; by &quot;{{ comment.comment_user.first_name }}&quot; on: &quot;{{blog.title}}&quot;</h1>
 
-    <form method="post">
+    <form method="post" id="form">
         {% csrf_token %}
         {{form}}
-        <input type="submit" value="Update Reply" class="btn btn-primary">
+        <input type="button" value="Update Reply" class="btn btn-primary" onclick="invokeModal()">
     </form>
 
 {% endblock body %}

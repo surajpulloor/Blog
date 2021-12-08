@@ -6,14 +6,22 @@
 
 {% endblock title %}
 
+{% block modal_body %}
+    Are you sure you want to update?
+{% endblock modal_body %}
+
+{% block btn_type %}Update Tag{% endblock btn_type %}
+
+
 
 {% block body %}
 
-    <form action="/home/{{tag.tagid}}/update/tag" method="post">
+    <form action="/home/{{tag.tagid}}/update/tag" method="post" id="form">
         {% csrf_token %}
         {{ form }}
 
-        <input type="submit" value="Update Tag" class="btn btn-primary tag-submit-btn">
+        <input type="button" value="Update Tag" class="btn btn-primary tag-submit-btn" onclick="invokeModal()">
     </form>
 
 {% endblock body %}
+

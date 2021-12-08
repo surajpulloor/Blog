@@ -2,8 +2,14 @@
 
 {% block title %}
 
-{% if blog.isVisible%}
-    {{blog.title}}
+{% if blog.isVisible or blog.user.id == request.user.id %}
+    {% if not blog.isVisible %}
+
+        {{blog.title}}(Protected)
+
+    {% else %}
+        {{ blog.title }}
+    {% endif %}
 {% else %}
     Protected
 {% endif %}
@@ -12,7 +18,7 @@
 
 {% block body %}
 
-    {% if blog.isVisible%}
+    {% if blog.isVisible or blog.user.id == request.user.id %}
 
         <div class="blog-title-author">
             <h1 class="blog-title">{{blog.title}}</h1>
@@ -28,7 +34,7 @@
             <h6>{{blog.noOfDisLikes}} Dislikes</h6>
         </div>
 
-        <p class="blog-body">{{blog.body}}</p>
+        <p class="blog-body">{{blog.body.html|safe}}</p>
 
         <ul class="tags">
             {% for tag in blog.tags.all %}

@@ -1,0 +1,25 @@
+{% extends 'blog/base.html' %}
+
+{% block title%}Delete a blog {% endblock %}
+{% block head %}
+    {{ form.media }}
+{% endblock head %}
+
+{% block modal_body %}
+    Are you sure you want to delete?
+{% endblock modal_body %}
+
+{% block btn_type %}Delete Blog{% endblock btn_type %}
+
+{%block body%}
+
+    <h1>Delete a blog</h1>
+
+    <form method="POST" action="{{ blogid }}" id="form">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="button" class="btn btn-primary" value="Delete Blog" onclick="invokeModal()">
+    </form>
+
+
+{%endblock%}
