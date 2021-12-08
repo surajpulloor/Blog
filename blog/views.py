@@ -904,7 +904,10 @@ def pin_comment(req, commentid):
 
     next = req.GET.get('next', '/')
 
-    return HttpResponseRedirect(next)
+    if next != '/':
+        return HttpResponseRedirect(next)
+    else:
+        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': comment.blog.blogid}) + "?next=0")
 
 
 def blog_likes_per_user(req):
