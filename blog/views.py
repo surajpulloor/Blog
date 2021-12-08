@@ -437,7 +437,12 @@ def update_comment(req, blogid, commentid):
                         c.body = form.cleaned_data['body']
                         c.save()
 
-                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
+
+                        next = req.GET.get('next', '/')
+                        if next != '/':
+                            return HttpResponseRedirect(next)
+                        else:
+                            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
                 else:
                     form = CommentForm(initial={'body': c.body})
 
@@ -487,7 +492,11 @@ def delete_comment(req, blogid, commentid):
                     b.save()
                     c.delete()
 
-                    return HttpResponseRedirect(reverse('blog:get_blog', blogid) + "?next=0")
+                    next = req.GET.get('next', '/')
+                    if next != '/':
+                        return HttpResponseRedirect(next)
+                    else:
+                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
 
                 else:
                     form = DisabledCommentForm(initial={'body': c.body})

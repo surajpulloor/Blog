@@ -28,8 +28,8 @@
 
                     </td>
 
-                    <td><a href="{% url 'blog:update_comment' comment_given.blog.blogid comment_given.comment_id %}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
-                    <td><a href="{% url 'blog:delete_comment' comment_given.blog.blogid comment_given.comment_id %}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
+                    <td><a href="{% url 'blog:update_comment' comment_given.blog.blogid comment_given.comment_id %}?next={{request.path}}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                    <td><a href="{% url 'blog:delete_comment' comment_given.blog.blogid comment_given.comment_id %}?next={{request.path}}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td>
                 </tr>
             {% endfor %}
         
