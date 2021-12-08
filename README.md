@@ -17,6 +17,14 @@ A Blog app written in Django
  * Like & Dislike Blog
  * Like & Dislike Comment
  * Pin Comment
+ * Page for displaying blog's liked by user (Analytics)
+ * Page for displaying blog's disliked by user (Analytics)
+ * Page for displaying comments liked by user (Analytics)
+ * Page for displaying comments's disliked by user (Analytics)
+ * Page for displaying comments's given by user (Analytics)
+ * Page for displaying replies given by user (Analytics)
+ * Added Rich-Text support to the blog's body. Uses django's quill.js package
  
 # TODO
-  * Add Quill.js for rich-text blogs, like ability to bold, create list,embed images, videos etc
+  * Disable the blog's body quill editor
+  * Save the images embedded within the quill editor(blog body) on the filesystem, currently being stored in the database along with other text in base64 format.
