@@ -11,6 +11,8 @@
         <table class="table">
             <tr>
                 <th>Reply Body</th>
+                <th>Total Likes</th>
+                <th>Total Dislikes</th>
                 <th>Blog</th>
                 <th>Blog Author</th>
                 {% comment %} <th>Update</th>
@@ -19,6 +21,8 @@
             {% for reply_given in replies_given %}
                 <tr>
                     <td>{{reply_given.body}}</td>
+                    <td>{{comment_given.noOfLikes}}</td>
+                    <td>{{comment_given.noOfDisLikes}}</td>
                     <td><a href="{% url 'blog:get_blog' reply_given.blog.blogid %}" target="_blank">{{reply_given.blog.title}}</a></td>
                     <td>
                         {{reply_given.blog.user.first_name}}
