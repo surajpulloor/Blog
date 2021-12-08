@@ -268,6 +268,11 @@
                                         <li><a class="dropdown-item" href="{% url 'blog:dashboard_get_comment_dislikes' %}">Comment DisLikes</a></li>
                                         
                                         <li><hr class="dropdown-divider"></li>
+
+                                        <li><a class="dropdown-item" href="{% url 'blog:dashboard_comments_given_per_user' %}">Comment Given</a></li>
+                                        <li><a class="dropdown-item" href="{% url 'blog:dashboard_replies_given_per_user' %}">Replies Given</a></li>
+                                        
+                                        <li><hr class="dropdown-divider"></li>
                                         
                                         <li><a class="dropdown-item" href="/home/signout?next={{request.path}}">Signout</a></li>
                                     </ul>

@@ -1,0 +1,41 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    Replies given
+{% endblock title %}
+
+{% block body %}
+    {% if replies_given|length %}
+
+        <h1>Replies given by you</h1>
+        <table class="table">
+            <tr>
+                <th>Reply Body</th>
+                <th>Blog</th>
+                <th>Blog Author</th>
+                {% comment %} <th>Update</th>
+                <th>Delete</th> {% endcomment %}
+            </tr>
+            {% for reply_given in replies_given %}
+                <tr>
+                    <td>{{reply_given.body}}</td>
+                    <td><a href="{% url 'blog:get_blog' reply_given.blog.blogid %}" target="_blank">{{reply_given.blog.title}}</a></td>
+                    <td>
+                        {{reply_given.blog.user.first_name}}
+                        {% if request.user == reply_given.blog.user %}
+                            (You)
+                        {% endif %}
+
+                    </td>
+
+                    {% comment %} <td><a href="{% url 'blog:update_comment' comment_given.blog.blogid comment_given.comment_id %}" class="blog-control btn btn-warning"><i class="bi-pencil-square"></i></a></td>
+                    <td><a href="{% url 'blog:delete_comment' comment_given.blog.blogid comment_given.comment_id %}" class="blog-control btn btn-danger"><i class="bi-trash-fill"></i></a></td> {% endcomment %}
+                </tr>
+            {% endfor %}
+        
+        </table>
+    {% else %}
+        <h1>Sorry, you have not given any replies till date.</h1>
+    {% endif %}
+
+{% endblock body %}

@@ -12,7 +12,7 @@ from blog.exceptions import ReplyToCommentBySameUser
 
 from .forms import LoginForm, SignUpForm, BlogForm, CommentForm, DisabledCommentForm, DisabledBlogForm, TagForm, DisabledTagForm
 
-from .models import Blog, Comment, Tags
+from .models import Blog, Comment, Tags, UserAnalytics
 
 
 def login_form(req):
@@ -387,6 +387,17 @@ def add_comment(req, blogid):
                             root_comment=None,
                             pinned_timestamp = timezone.now()
                         )
+
+
+                    # Add the reply comment to the UserAnalytics table
+                    if UserAnalytics.objects.filter(user=req.user).count() == 0:
+                        user_analytics = UserAnalytics.objects.create(user=req.user)
+                    else:
+                        user_analytics = UserAnalytics.objects.get(user=req.user)
+
+                    user_analytics.comments_given.add(c)
+                    user_analytics.save()
+
                     b.noOfComments += 1
 
                     b.save()
@@ -468,6 +479,11 @@ def delete_comment(req, blogid, commentid):
                     
                     b.noOfComments -= Comment.objects.filter(root_comment=c).count() + 1
 
+                    # Remove the comment to the UserAnalytics table
+                    user_analytics = UserAnalytics.objects.get(user=req.user)
+                    user_analytics.comments_given.remove(c)
+                    user_analytics.save()
+
                     b.save()
                     c.delete()
 
@@ -539,6 +555,16 @@ def create_reply_comment(req, blogid, commentid):
                                 root_comment=head_comment.root_comment,
                                 pinned_timestamp=timezone.now()
                             )
+
+
+                        # Add the reply comment to the UserAnalytics table
+                        if UserAnalytics.objects.filter(user=req.user).count() == 0:
+                            user_analytics = UserAnalytics.objects.create(user=req.user)
+                        else:
+                            user_analytics = UserAnalytics.objects.get(user=req.user)
+
+                        user_analytics.replies_given.add(reply_comment)
+                        user_analytics.save()
                             
 
                         b.noOfComments += 1
@@ -637,6 +663,11 @@ def delete_reply_comment(req, blogid, commentid, reply_commentid):
                 if req.method == 'POST':
 
                     form = DisabledCommentForm(req.POST)
+
+                    # Remove the comment to the UserAnalytics table
+                    user_analytics = UserAnalytics.objects.get(user=req.user)
+                    user_analytics.replies_given.remove(reply_comment)
+                    user_analytics.save()
 
 
                     if Comment.objects.filter(head_comment=reply_comment).count() == 0:
@@ -915,7 +946,25 @@ def comment_dislikes_per_user(req):
         return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
     
 def comments_given_per_user(req):
-    pass
+    if req.user.is_authenticated:
+
+        user = UserAnalytics.objects.get(user=req.user)
+        comments_given_by_user = user.comments_given.all()
+
+        return render(req, 'blog/get_comments_given_per_user.html', {'comments_given': comments_given_by_user})
+
+    else:
+        next = req.GET.get('next', '/')
+        return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)
     
 def replies_given_per_user(req):
-    pass
+    if req.user.is_authenticated:
+
+        user = UserAnalytics.objects.get(user=req.user)
+        replies_given_by_user = user.replies_given.all()
+
+        return render(req, 'blog/get_replies_given_per_user.html', {'replies_given': replies_given_by_user})
+
+    else:
+        next = req.GET.get('next', '/')
+        return HttpResponseRedirect(reverse('blog:login') + "?next=" + next)

@@ -12,18 +12,12 @@ class Tags(models.Model):
     def __str__(self):
         return self.tag_name
 
-'''
+
 class UserAnalytics(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    likes = models.IntegerField(default=0)
-    dislikes = models.IntegerField(default=0)
-    blogs_liked = models.ManyToManyField('Blog', blank=True, related_name="blogs_liked")
-    blogs_disliked = models.ManyToManyField('Blog', blank=True, related_name="blog_disliked")
-    comments_liked = models.ManyToManyField('Comment', blank=True, related_name="comments_liked")
-    comments_disliked = models.ManyToManyField('Comment', blank=True, related_name="comments_disliked")
     comments_given = models.ManyToManyField('Comment', blank=True, related_name="comments_given")
     replies_given = models.ManyToManyField('Comment', blank=True, related_name="replies_given")
-'''
+
 
 
 class Blog(models.Model):
