@@ -629,7 +629,12 @@ def update_reply_comment(req, blogid, commentid, reply_commentid):
                         reply_comment.body = form.cleaned_data['body']
                         reply_comment.save()
 
-                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
+                        next = req.GET.get('next', '/')
+                        if next != '/':
+                            return HttpResponseRedirect(next)
+                        else:
+                            return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
+
                 else:
                     form = CommentForm(initial={'body': reply_comment.body})
 
@@ -703,7 +708,12 @@ def delete_reply_comment(req, blogid, commentid, reply_commentid):
                     b.save()
                         
 
-                    return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
+                    next = req.GET.get('next', '/')
+                    if next != '/':
+                        return HttpResponseRedirect(next)
+                    else:
+                        return HttpResponseRedirect(reverse('blog:get_blog', kwargs={'blog': blogid}) + "?next=0")
+
 
                 else:
                     form = DisabledCommentForm(initial={'body': reply_comment.body})
