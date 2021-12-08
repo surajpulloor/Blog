@@ -12,13 +12,13 @@
                 <div class="comment-voting">
 
                     {% if comment.liked %}
-                        <a class="liked" href="/home/{{comment.comment.comment_id}}/like/comment?next=/home/{{comment.comment.comment_id}}/like/comment">
+                        <a class="liked" href="{% url 'blog:set_comment_like' comment.comment.comment_id %}">
                             <span aria-hidden="true" class="ligature">&#9650;</span>
                             <span class="sr-only">Vote up</span>
                         </a>
                     {% else %}
 
-                        <a href="/home/{{comment.comment.comment_id}}/like/comment?next=/home/{{comment.comment.comment_id}}/like/comment">
+                        <a href="{% url 'blog:set_comment_like' comment.comment.comment_id %}">
                             <span aria-hidden="true" class="ligature">&#9650;</span>
                             <span class="sr-only">Vote up</span>
                         </a>
@@ -26,12 +26,12 @@
                     {% endif %}
 
                     {% if comment.disliked %}
-                        <a class="disliked" href="/home/{{comment.comment.comment_id}}/dislike/comment?next=/home/{{comment.comment.comment_id}}/dislike/comment">
+                        <a class="disliked" href="{% url 'blog:set_comment_dislike' comment.comment.comment_id %}">
                             <span aria-hidden="true" class="ligature">&#9660;</span>
                             <span class="sr-only">Vote down</span>
                         </a>
                     {% else %}
-                        <a href="/home/{{comment.comment.comment_id}}/dislike/comment?next=/home/{{comment.comment.comment_id}}/dislike/comment">
+                        <a href="{% url 'blog:set_comment_dislike' comment.comment.comment_id %}">
                             <span aria-hidden="true" class="ligature">&#9660;</span>
                             <span class="sr-only">Vote down</span>
                         </a>
@@ -45,7 +45,7 @@
 
                         <div class="author-pin">
                             
-                            <a href="/home/{{comment.comment.comment_user.id}}/blogs" class="comment-author">
+                            <a href="{% url 'blog:get_blogs' comment.comment.comment_user.id %}" class="comment-author">
                                 <span class="comment-author">
                                     {{comment.comment.comment_user.first_name}}
                                 </span>
@@ -55,9 +55,9 @@
                             <span class="pin-control">
                                 {% if blog.user.id == request.user.id %}
                                     {% if comment.comment.is_pinned %}
-                                        <a href="/home/{{comment.comment.comment_id}}/pin/comment?next={{request.path}}" class="pin-comment"><i class="bi-pin-fill"></i></a>
+                                        <a href="{% url 'blog:pin_comment' comment.comment.comment_id %}" class="pin-comment"><i class="bi-pin-fill"></i></a>
                                     {% else %}
-                                        <a href="/home/{{comment.comment.comment_id}}/pin/comment?next={{request.path}}" class="pin-comment"><i class="bi-pin"></i></a>
+                                        <a href="{% url 'blog:pin_comment' comment.comment.comment_id %}" class="pin-comment"><i class="bi-pin"></i></a>
                                     {% endif %}
 
                                 {% elif comment.comment.is_pinned %}
@@ -87,11 +87,11 @@
                         {% if request.user.id == comment.comment.comment_user.id %}
 
                             {% if comment.comment.isRoot %}
-                                <a href="{{blog.blogid}}/{{comment.comment.comment_id}}/update/comment?next={{request.path|urlencode}}" class="comment-control btn btn-warning"><i class="bi-pencil-square"></i></a>
-                                <a href="{{blog.blogid}}/{{comment.comment.comment_id}}/delete/comment?next={{request.path|urlencode}}" class="comment-control btn btn-danger"><i class="bi-trash-fill"></i></a>
+                                <a href="{% url 'blog:update_comment' blog.blogid comment.comment.comment_id %}" class="comment-control btn btn-warning"><i class="bi-pencil-square"></i></a>
+                                <a href="{% url 'blog:delete_comment' blog.blogid comment.comment.comment_id %}" class="comment-control btn btn-danger"><i class="bi-trash-fill"></i></a>
                             {% else %}
-                                <a href="{{blog.blogid}}/{{comment.root_comment_id}}/{{comment.comment.comment_id}}/update/reply/comment?next={{request.path|urlencode}}" class="comment-control btn btn-warning"><i class="bi-pencil-square"></i></a>
-                                <a href="{{blog.blogid}}/{{comment.root_comment_id}}/{{comment.comment.comment_id}}/delete/reply/comment?next={{request.path|urlencode}}" class="comment-control btn btn-danger"><i class="bi-trash-fill"></i></a>
+                                <a href="{% url 'blog:update_reply' blog.blogid comment.root_comment_id comment.comment.comment_id %}" class="comment-control btn btn-warning"><i class="bi-pencil-square"></i></a>
+                                <a href="{% url 'blog:delete_reply' blog.blogid comment.root_comment_id comment.comment.comment_id %}" class="comment-control btn btn-danger"><i class="bi-trash-fill"></i></a>
                             {% endif %}
                         {% endif %}
                     
@@ -99,7 +99,7 @@
                     
                     {% if request.user.id != comment.comment.comment_user.id %}
                         <span class="reply-control">
-                            <a href="{{blog.blogid}}/{{comment.comment.comment_id}}/reply/comment?next={{request.path|urlencode}}" 
+                            <a href="{% url 'blog:add_reply' blog.blogid comment.comment.comment_id %}" 
                                 class="btn btn-warning comment-control">
                                     <i class="bi-reply-fill"></i>
                             </a>
@@ -134,7 +134,7 @@
                     <span class="update-delete-controls">
                         {% if request.user.id == comment.comment.comment_user.id %}
                             <a 
-                                href="{{blog.blogid}}/{{comment.root_comment_id}}/{{comment.comment.comment_id}}/delete/reply/comment?next={{request.path|urlencode}}" 
+                                href="{% url 'blog:delete_reply' blog.blogid comment.root_comment_id comment.comment.comment_id %}" 
                                 class="comment-control btn btn-success">
                                 <i class="bi-arrow-counterclockwise"></i>
                             </a>                
