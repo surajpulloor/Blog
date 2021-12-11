@@ -1,13 +1,11 @@
 from django.urls.conf import path
 
-from blog.views import (
-                    dashboard,    
-                    blog_likes_per_user,
-                    blog_dislikes_per_user,
-                    comment_likes_per_user,
-                    comment_dislikes_per_user,
-                    comments_given_per_user,
-                    replies_given_per_user)
+from blog.views.bld_per_user_views import *
+from blog.views.cld_per_user_views import *
+from blog.views.comments_per_user_views import *
+from blog.views.replies_per_user_views import *
+from blog.views.user_views import *
+
 
 urlpatterns = [
 

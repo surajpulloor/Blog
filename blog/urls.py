@@ -1,29 +1,14 @@
 from django.urls.conf import path, include
 
-from blog.views import (login_form,  
-                        signout_form, 
-                        get_users, 
-                        get_blogs, 
-                        get_blog, 
-                        signup,
-                        create_blog,
-                        update_blog,
-                        delete_blog,
-                        set_like,
-                        set_dislike,
-                        add_comment,
-                        update_comment,
-                        delete_comment,
-                        create_reply_comment,
-                        update_reply_comment,
-                        delete_reply_comment,
-                        set_comment_like,
-                        set_comment_dislike,
-                        create_tag,
-                        update_tag,
-                        delete_tag,
-                        pin_comment
-                        )
+from blog.views.blog_likes_dislikes_views import *
+from blog.views.blog_views import *
+from blog.views.comment_likes_dislikes_views import *
+from blog.views.comment_views import *
+from blog.views.pin_comment_views import *
+from blog.views.reply_views import *
+from blog.views.tags_views import *
+from blog.views.user_views import *
+
 
 app_name="blog"
 
